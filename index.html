@@ -1,0 +1,51 @@
+<!doctype html>
+<html ng-app="generatorApp">
+  <head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <script src="app.js"></script>
+    <script src="services.js"></script>
+    <script src="controller.js"></script>
+    <script type='text/javascript' src='jquery.js'></script>
+    <script type='text/javascript' src='siopm.js'></script>
+
+    <style type="text/css">
+    textarea {
+    width: 640px;
+    height: 16em;
+    }
+    </style>
+  </head>
+  <body>
+    <div ng-controller="generatorController">
+      <div>
+        <h1>MMLを入力してください</h1>
+
+        <textarea cols="100" rows="20"
+          ng-model="inputText"
+          placeholder="MMLを入力してください"
+          ng-change="generate()"
+        ></textarea>
+      </div>
+      <br/>
+      <span>MMLフォーマット:
+        <select>
+          <option>SiON (すたどんたんでお馴染み)</option>
+        </select>
+      </span>
+    </div>
+
+    <hr>
+
+    <div>
+      <a href="http://app.16dimensional.com/stadon/">すたどんたん</a>
+    </div>
+    <br/>
+    <div>
+      <a href="https://github.com/cat2151/MML-quick-player/">ソースファイル githubリポジトリ</a>
+    </div>
+    <div>
+      <a href="https://github.com/keim/SiON/">Powered by SiON</a>
+    </div>
+  </body>
+</html>
