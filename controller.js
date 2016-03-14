@@ -36,7 +36,7 @@ function($scope, $location, $timeout, GeneratorService) {
       setParamsToUrlFromScope();
     }, 0);
 
-    $scope.generatedMml = $scope.inputText;
+    $scope.generatedMml = $scope.p.inputText;
     SIOPM.compile($scope.generatedMml);
   };
 
