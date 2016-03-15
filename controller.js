@@ -36,7 +36,7 @@ function($scope, $location, $timeout, GeneratorService) {
     var prms = "";
     prms += "hashtags=" + "sionmml";
     prms += "&text=" +
-      encodeURIComponent("♪" + $scope.p.inputText + "♪ " +
+      encodeURIComponent("♪" + $scope.p.inputText.substr(0, 50) + "♪ " +
         window.location.href
       );
     window.open(twUrl + prms, "", "scrollbars=yes,width=500,height=300");
