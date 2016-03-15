@@ -31,6 +31,18 @@ function($scope, $location, $timeout, GeneratorService) {
   }
 
 
+  $scope.openTweet = function() {
+    var twUrl = "https://twitter.com/intent/tweet?";
+    var prms = "";
+    prms += "hashtags=" + "sionmml";
+    prms += "&text=" +
+      encodeURIComponent("♪" + $scope.p.inputText + "♪ " +
+        window.location.href
+      );
+    window.open(twUrl + prms, "", "scrollbars=yes,width=500,height=300");
+  };
+
+
   $scope.generate = function() {
     $timeout(function() { // compileより前にする(compileがSIOPMロード失敗の為にundefinedでexceptionになっても、先にURLへの反映はしておく)
       setParamsToUrlFromScope();
