@@ -53,7 +53,10 @@ function($scope, $location, $timeout, GeneratorService) {
   };
 
 
-
+  $scope.reverseOctave = function() {
+    $scope.p.inputText = GeneratorService.reverseOctave($scope.p.inputText);
+    $scope.generate();
+  }
 
   SIOPM.onLoad = function() {
     if (angular.isString($scope.p.inputText)) {
