@@ -4,6 +4,7 @@ function($scope, $location, $timeout, GeneratorService) {
 
   $scope.p = {inputText: ''};
   $scope.generatedMml = "なし";
+  $scope.mmlFormat = "sion";
 
 
   // URLから取得 [用途] URLだけでMMLを受け取れるようにする
@@ -29,8 +30,7 @@ function($scope, $location, $timeout, GeneratorService) {
     if (!paramFromUrl) return undefined;
     return JSON.parse(lzbase62.decompress(paramFromUrl));
   }
-
-
+  
   $scope.openTweet = function() {
     var twUrl = "https://twitter.com/intent/tweet?";
     var prms = "";
@@ -41,15 +41,27 @@ function($scope, $location, $timeout, GeneratorService) {
       );
     window.open(twUrl + prms, "", "scrollbars=yes,width=500,height=300");
   };
-
-
+  
   $scope.generate = function() {
     $timeout(function() { // compileより前にする(compileがSIOPMロード失敗の為にundefinedでexceptionになっても、先にURLへの反映はしておく)
       setParamsToUrlFromScope();
     }, 0);
 
     $scope.generatedMml = $scope.p.inputText;
-    SIOPM.compile($scope.generatedMml);
+
+    switch($scope.mmlFormat){
+      case "sion" :
+        SIOPM.stop();
+        SIOPM.compile($scope.generatedMml);
+        break;
+      case "sionic" :
+        Pico.pause();
+        Pico.play(Sionic($scope.generatedMml));
+        break;
+      default: 
+        console.error("Unsupported format");
+    }
+    
   };
 
 
@@ -70,9 +82,17 @@ function($scope, $location, $timeout, GeneratorService) {
     SIOPM.play();
   };
 
-  SIOPM.initialize(); // [前提] SIOPMのプロパティへ各functionを代入し終わっていること
+  try{
+    SIOPM.initialize(); // [前提] SIOPMのプロパティへ各functionを代入し終わっていること
+  }catch(e){
+    //fallback
+    $scope.mmlFormat = "sionic";
+  }
   $timeout(function() {
     setParamsToScopeFromUrl(); // [前提] $scopeのプロパティへ各functionを代入し終わっていること
+    if($scope.mmlFormat === "sionic"){
+      $scope.generate();
+    }
   }, 0);
 
 
