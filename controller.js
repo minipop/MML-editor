@@ -5,6 +5,7 @@ function($scope, $location, $timeout, GeneratorService) {
   $scope.p = {inputText: ''};
   $scope.generatedMml = "なし";
   $scope.mmlFormat = "sion";
+  $scope.iPhoneReady = false;
 
 
   // URLから取得 [用途] URLだけでMMLを受け取れるようにする
@@ -43,19 +44,29 @@ function($scope, $location, $timeout, GeneratorService) {
   };
   
   $scope.generate = function() {
+    //iOSでは、WebAudioを最初にclickイベントから扱う必要がある。
+    //一度onloadまたはonchangedで実行してしまうと、その後clickで再生しても無音になる。
+    if($scope.isiPhone() && $scope.iPhoneReady === false){
+        return;
+    }
+      
     $timeout(function() { // compileより前にする(compileがSIOPMロード失敗の為にundefinedでexceptionになっても、先にURLへの反映はしておく)
       setParamsToUrlFromScope();
     }, 0);
 
     $scope.generatedMml = $scope.p.inputText;
+    try{
+      SIOPM.stop();
+    }catch(e){
+      console.log(e);
+    }
+    Pico.pause();
 
     switch($scope.mmlFormat){
       case "sion" :
-        SIOPM.stop();
         SIOPM.compile($scope.generatedMml);
         break;
       case "sionic" :
-        Pico.pause();
         Pico.play(Sionic($scope.generatedMml));
         break;
       default: 
@@ -63,7 +74,15 @@ function($scope, $location, $timeout, GeneratorService) {
     }
     
   };
-
+  
+  $scope.play = function(){
+    $scope.iPhoneReady = true;
+    $scope.generate();
+  }
+  
+  $scope.isiPhone = function(){
+    return window.navigator.userAgent.toLowerCase().indexOf("iphone") >= 0;
+  }
 
   $scope.reverseOctave = function() {
     $scope.p.inputText = GeneratorService.reverseOctave($scope.p.inputText);
@@ -87,12 +106,10 @@ function($scope, $location, $timeout, GeneratorService) {
   }catch(e){
     //fallback
     $scope.mmlFormat = "sionic";
+    $scope.generate();
   }
   $timeout(function() {
     setParamsToScopeFromUrl(); // [前提] $scopeのプロパティへ各functionを代入し終わっていること
-    if($scope.mmlFormat === "sionic"){
-      $scope.generate();
-    }
   }, 0);
 
 
